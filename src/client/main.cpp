@@ -8,6 +8,10 @@
 #include <utils/string.hpp>
 #include <utils/io.hpp>
 
+#include <Windows.h>
+#include <iostream>
+#include <string>
+
 DECLSPEC_NORETURN void WINAPI exit_hook(const int code)
 {
 	component_loader::pre_destroy();
@@ -107,6 +111,29 @@ void limit_parallel_dll_loading()
 
 int main()
 {
+	if(!IsUserAnAdmin())
+	{
+		wchar_t module_name[MAX_PATH];
+		if (GetModuleFileNameW(nullptr, module_name, MAX_PATH) == 0) {
+			MessageBoxA(nullptr, "Failed to get Module Name", "ERROR", MB_ICONERROR);
+			return EXIT_FAILURE;
+		}
+
+		SHELLEXECUTEINFOW info = { sizeof(info) };
+		info.lpVerb = L"runas";
+		info.lpFile = module_name;
+		info.hwnd = nullptr;
+		info.nShow = SW_NORMAL;
+
+		if(!ShellExecuteExW(&info))
+		{
+			MessageBoxA(nullptr, "Failed to request admin privileges, please make sure you are using an admin account.", "ERROR", MB_ICONERROR);
+			return EXIT_FAILURE;
+		}
+
+		return EXIT_SUCCESS;
+	}
+	
 	if (!game::environment::is_dedi())
 		ShowWindow(GetConsoleWindow(), SW_HIDE);
 

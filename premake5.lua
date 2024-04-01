@@ -163,9 +163,11 @@ newaction {
 			if branchName == nil or branchName == '' then
 				proc = assert(io.popen("git show -s --pretty=%d HEAD"))
 				local branchInfo = proc:read('*l')
-				m = string.match(branchInfo, ".+,.+, ([^)]+)")
-				if m ~= nil then
-					branchName = m
+				if branchInfo ~= nil then
+					m = string.match(branchInfo, ".+,.+, ([^)]+)")
+					if m ~= nil then
+						branchName = m
+					end
 				end
 			end
 
