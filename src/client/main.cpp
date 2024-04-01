@@ -8,10 +8,6 @@
 #include <utils/string.hpp>
 #include <utils/io.hpp>
 
-#include <Windows.h>
-#include <iostream>
-#include <string>
-
 DECLSPEC_NORETURN void WINAPI exit_hook(const int code)
 {
 	component_loader::pre_destroy();
@@ -123,6 +119,7 @@ int main()
 		info.lpVerb = L"runas";
 		info.lpFile = module_name;
 		info.hwnd = nullptr;
+		info.nShow = SW_NORMAL;
 		info.nShow = SW_NORMAL;
 
 		if(!ShellExecuteExW(&info))
